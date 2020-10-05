@@ -7,18 +7,15 @@ class PublicKey:
         self.e = e
         self.n = n
     """
-    Name: EncryptFile
+    Name: Encrypt
     Purpose: To encrypt a file and write the ciphertext to another file
-    Param Source: The file where the plaintext is read from
-    Param Destination: The file where the ciphertext is written to
+    Param PlainText: The plaintext to be encrypted
     Author: Samuel McManus
-    Uses: MyIO.ReadFile, MyIO.WriteEncodedFile
     Date: September 30, 2020
     """
-    def EncryptFile(self, Source, Destination):
+    def Encrypt(self, Plaintext):
         #Read the source file and encode it to base64. This is necessary to decode some characters later,
         #particularly "-"
-        Plaintext = MyIO.ReadFile(Source)
         PlaintextEncoded = str(base64.b64encode(Plaintext.encode("utf-8")), "utf-8")
         Ciphertext = ""
         for i in PlaintextEncoded:
@@ -38,8 +35,7 @@ class PublicKey:
                 Ciphertext = Ciphertext + chr(EncryptedInt)
             Ciphertext = Ciphertext + " "
         Ciphertext = str(base64.b64encode(Ciphertext.encode("utf-8")), "utf-8")
-        #Ascii-armor the ciphertext
-        MyIO.WriteEncodedFile(Destination, Ciphertext)
+        return Ciphertext
     """
     Name: DecryptHash
     Purpose: To decrypt a signed hash
@@ -96,17 +92,14 @@ class PrivateKey:
         self.d = d
         self.n = n
     """
-    Name: DecryptFile
-    Purpose: Decrypt a ciphertext file and write it to a plaintext file
-    Param Source: The source ciphertext file
-    Param Destination: The destination plaintext file
-    Uses: MyIO.ReadEncodedFile, MyIO.WriteFile
+    Name: Decrypt
+    Purpose: Decrypt a ciphertext
+    Param Ciphertext: The ciphertext to be decrypted
     Used By: Main
     Date: September 30, 2020
     """
-    def DecryptFile(self, Source, Destination):
+    def Decrypt(self, Ciphertext):
         #Get the Ciphertext from the utf-8 encoded file
-        Ciphertext = MyIO.ReadEncodedFile(Source)
         Plaintext = ""
         i = 0
         Ciphertext = str(base64.b64decode(Ciphertext), "utf-8")
@@ -134,7 +127,7 @@ class PrivateKey:
         #Lastly, you have a base64 encoded text, so we have to decode it and write it
         #to a file
         Plaintext = str(base64.b64decode(Plaintext), "utf-8")
-        MyIO.WriteFile(Destination, Plaintext)
+        return Plaintext
 
 
     """
